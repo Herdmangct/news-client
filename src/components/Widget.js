@@ -26,7 +26,8 @@ class App extends Component {
       until:
         "Sat Aug 31 2019 00:00:00 GMT+1000 (Australian Eastern Standard Time)",
       interval: "1 day",
-      chartData: ""
+      chartData: "",
+      error: ""
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -60,31 +61,48 @@ class App extends Component {
           from: from,
           until: until,
           interval: interval,
-          chartData: chartData
+          chartData: chartData,
+          error: ""
         });
       })
       .catch(error => {
-        alert(error);
-        console.log(error);
+        alert(
+          `${error} \nPlease make sure you are connected to the news-api backend and that it is running on localhost:3000/results`
+        );
+        this.setState({ error: error.response });
+        console.log(error.response);
       });
   }
 
   render() {
-    if (this.state.chartData) {
+    if (!this.state.error) {
+      if (this.state.chartData) {
+        return (
+          <div style={styles.app}>
+            <InputForm fetchData={this.fetchData} />
+            <Chart
+              chartData={this.state.chartData}
+              query={this.state.query}
+              from={this.state.from}
+              until={this.state.until}
+              interval={this.state.interval}
+              isConnectedToAPI={this.state.isConnectedToAPI}
+            />
+          </div>
+        );
+      } else {
+        return <CircularProgress />;
+      }
+    } else {
       return (
-        <div style={styles.app}>
-          <InputForm fetchData={this.fetchData} />
-          <Chart
-            chartData={this.state.chartData}
-            query={this.state.query}
-            from={this.state.from}
-            until={this.state.until}
-            interval={this.state.interval}
-          />
+        <div>
+          <p>The API request failed</p>
+          <p>
+            Please make sure you are connected to the news-api backend and that
+            it is running on localhost:3000/results
+          </p>
         </div>
       );
-    } else {
-      return <CircularProgress />;
     }
   }
 }
