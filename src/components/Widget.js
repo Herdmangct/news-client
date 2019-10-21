@@ -69,8 +69,7 @@ class App extends Component {
         alert(
           `${error} \nPlease make sure you are connected to the news-api backend and that it is running on localhost:3000/results`
         );
-        this.setState({ error: error.response });
-        console.log(error.response);
+        this.setState({ error: error });
       });
   }
 
@@ -96,7 +95,9 @@ class App extends Component {
     } else {
       return (
         <div>
-          <p>The API request failed</p>
+          <p>
+            The API request failed with response - {this.state.error.toString()}
+          </p>
           <p>
             Please make sure you are connected to the news-api backend and that
             it is running on localhost:3000/results
